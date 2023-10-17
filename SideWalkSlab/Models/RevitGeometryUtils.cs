@@ -101,6 +101,38 @@ namespace SideWalkSlab.Models
             return sideWalkCurves;
         }
 
+        // Проверка на то существуют линии в модели
+        public static bool IsElemsExistInModel(Document doc, IEnumerable<int> elems, Type type)
+        {
+            if (elems is null)
+            {
+                return false;
+            }
+
+            foreach (var elem in elems)
+            {
+                ElementId id = new ElementId(elem);
+                Element curElem = doc.GetElement(id);
+                if (curElem is null || !(curElem.GetType().IsSubclassOf(type) || curElem.GetType() == type))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        // Получение линий из Settings
+        public static List<Curve> GetCurvesById(Document doc, string elemIdsInSettings)
+        {
+            var elemId = GetIdsByString(elemIdsInSettings);
+            var modelCurvesId = elemId.Select(id => new ElementId(id));
+            var modelCurveElems = modelCurvesId.Select(id => doc.GetElement(id)).OfType<ModelCurve>();
+            var curves = modelCurveElems.Select(c => c.GeometryCurve).ToList();
+
+            return curves;
+        }
+
         // Генератор нормализованных пораметров точек на линии
         public static List<double> GenerateNormalizeParameters(int count)
         {
@@ -140,6 +172,21 @@ namespace SideWalkSlab.Models
             }
 
             return parameters.OrderBy(p => p).ToList();
+        }
+
+        // Получение id элементов на основе списка в виде строки
+        public static List<int> GetIdsByString(string elems)
+        {
+            if (string.IsNullOrEmpty(elems))
+            {
+                return null;
+            }
+
+            var elemIds = elems.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries)
+                         .Select(s => int.Parse(s.Remove(0, 2)))
+                         .ToList();
+
+            return elemIds;
         }
 
         // Метод получения строки с ElementId

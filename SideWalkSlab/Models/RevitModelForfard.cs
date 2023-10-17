@@ -80,6 +80,22 @@ namespace SideWalkSlab
         }
         #endregion
 
+        #region Проверка на то, существуют линии в модели
+        public bool IsModelCurvesExistInModel(string modelCurvesIds)
+        {
+            var elemIds = RevitGeometryUtils.GetIdsByString(modelCurvesIds);
+
+            return RevitGeometryUtils.IsElemsExistInModel(Doc, elemIds, typeof(ModelCurve));
+        }
+        #endregion
+
+        #region Получение линий края плиты из Settings
+        public void GetSideWalkLinesBySettings(string elemIdsInSettings)
+        {
+            SideWalkLines = RevitGeometryUtils.GetCurvesById(Doc, elemIdsInSettings);
+        }
+        #endregion
+
         public void CreateSideWalk()
         {
             Curve edgeCurve = EdgeForSweep.AsCurve();

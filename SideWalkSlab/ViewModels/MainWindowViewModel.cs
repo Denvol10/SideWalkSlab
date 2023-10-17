@@ -126,6 +126,7 @@ namespace SideWalkSlab.ViewModels
         private void SaveSettings()
         {
             Properties.Settings.Default.EdgeRepresentation = EdgeRepresentation;
+            Properties.Settings.Default.SideWalkLineIds = SideWalkLineIds;
             Properties.Settings.Default.Save();
         }
 
@@ -144,6 +145,18 @@ namespace SideWalkSlab.ViewModels
                 {
                     EdgeRepresentation = edgeRepresentation;
                     RevitModel.GetEdgeBySettings(edgeRepresentation);
+                }
+            }
+            #endregion
+
+            #region Получение линий края плиты из Settings
+            if (!(Properties.Settings.Default.SideWalkLineIds is null))
+            {
+                string sideWalkLinesInSettings = Properties.Settings.Default.SideWalkLineIds;
+                if (RevitModel.IsModelCurvesExistInModel(sideWalkLinesInSettings) && !string.IsNullOrEmpty(sideWalkLinesInSettings))
+                {
+                    SideWalkLineIds = sideWalkLinesInSettings;
+                    RevitModel.GetSideWalkLinesBySettings(sideWalkLinesInSettings);
                 }
             }
             #endregion

@@ -34,5 +34,17 @@ namespace SideWalkSlab.Properties {
                 this["EdgeRepresentation"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string SideWalkLineIds {
+            get {
+                return ((string)(this["SideWalkLineIds"]));
+            }
+            set {
+                this["SideWalkLineIds"] = value;
+            }
+        }
     }
 }
