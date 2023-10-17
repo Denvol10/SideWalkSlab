@@ -81,5 +81,18 @@
                          Style="{StaticResource SelectedItemsBox}" />
             </UniformGrid>
         </GroupBox>
+        <GroupBox Header="Создать крайний элемент плиты"
+                  Style="{StaticResource BorderGroupStyle}">
+            <UniformGrid Columns="2">
+                <Button Style="{StaticResource SelectButton}"
+                        Content="Создать"
+                        Margin="0,10"
+                        Command="{Binding CreateSideWalkCommand}" />
+                <Button Style="{StaticResource SelectButton}"
+                        Content="Отмена"
+                        Margin="0,10"
+                        Command="{Binding CloseWindowCommand}" />
+            </UniformGrid>
+        </GroupBox>
     </StackPanel>
 </Window>

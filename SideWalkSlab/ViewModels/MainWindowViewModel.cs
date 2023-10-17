@@ -64,6 +64,34 @@ namespace SideWalkSlab.ViewModels
         }
         #endregion
 
+        #region Создать край плиты
+        public ICommand CreateSideWalkCommand { get; }
+
+        private void OnCreateSideWalkCommandExecuted(object parameter)
+        {
+
+        }
+
+        private bool CanCreateSideWalkCommandExecute(object parameter)
+        {
+            return true;
+        }
+        #endregion
+
+        #region Закрыть окно
+        public ICommand CloseWindowCommand { get; }
+
+        private void OnCloseWindowCommandExecuted(object parameter)
+        {
+            RevitCommand.mainView.Close();
+        }
+
+        private bool CanCloseWindowCommandExecute(object parameter)
+        {
+            return true;
+        }
+        #endregion
+
         #endregion
 
         #region Конструктор класса MainWindowViewModel
@@ -74,6 +102,10 @@ namespace SideWalkSlab.ViewModels
             #region Команды
 
             GetEdgeCommand = new LambdaCommand(OnGetEdgeCommandExecuted, CanGetEdgeCommandExecute);
+
+            CreateSideWalkCommand = new LambdaCommand(OnCreateSideWalkCommandExecuted, CanCreateSideWalkCommandExecute);
+
+            CloseWindowCommand = new LambdaCommand(OnCloseWindowCommandExecuted, CanCloseWindowCommandExecute);
 
             #endregion
         }
