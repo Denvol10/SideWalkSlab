@@ -68,6 +68,18 @@
         </Style>
     </Window.Resources>
     <StackPanel>
-        
+        <GroupBox Header="Ребро для построения"
+                  Style="{StaticResource BorderGroupStyle}">
+            <UniformGrid Columns="2">
+                <UniformGrid Rows="2">
+                    <TextBlock Text="Ребро"
+                               Style="{StaticResource TextAboveButton}" />
+                    <Button Style="{StaticResource SelectButton}"
+                            Command="{Binding GetEdgeCommand}" />
+                </UniformGrid>
+                <TextBox Text="{Binding EdgeRepresentation, Mode=OneWay}"
+                         Style="{StaticResource SelectedItemsBox}" />
+            </UniformGrid>
+        </GroupBox>
     </StackPanel>
 </Window>

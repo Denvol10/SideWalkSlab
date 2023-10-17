@@ -35,8 +35,34 @@ namespace SideWalkSlab.ViewModels
         }
         #endregion
 
+        #region Ребро балки
+        private string _edgeRepresentation;
+
+        public string EdgeRepresentation
+        {
+            get => _edgeRepresentation;
+            set => Set(ref _edgeRepresentation, value);
+        }
+        #endregion
 
         #region Команды
+
+        #region Получить ребро элемента
+        public ICommand GetEdgeCommand { get; }
+
+        private void OnGetEdgeCommandExecuted(object parameter)
+        {
+            RevitCommand.mainView.Hide();
+            RevitModel.GetEdgeBySelection();
+            EdgeRepresentation = RevitModel.EdgeRepresentation;
+            RevitCommand.mainView.ShowDialog();
+        }
+
+        private bool CanGetEdgeCommandExecute(object parameter)
+        {
+            return true;
+        }
+        #endregion
 
         #endregion
 
@@ -46,6 +72,8 @@ namespace SideWalkSlab.ViewModels
             RevitModel = revitModel;
 
             #region Команды
+
+            GetEdgeCommand = new LambdaCommand(OnGetEdgeCommandExecuted, CanGetEdgeCommandExecute);
 
             #endregion
         }

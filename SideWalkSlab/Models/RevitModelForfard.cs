@@ -10,6 +10,7 @@ using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
 using Autodesk.Revit.DB.Architecture;
 using System.Collections.ObjectModel;
+using SideWalkSlab.Models;
 
 namespace SideWalkSlab
 {
@@ -28,7 +29,23 @@ namespace SideWalkSlab
             Doc = uiapp.ActiveUIDocument.Document;
         }
 
+        #region Грань для построения края плиты
+        public Edge EdgeForSweep { get; set; }
 
+        private string _edgeRepresentation;
+        public string EdgeRepresentation
+        {
+            get => _edgeRepresentation;
+            set => _edgeRepresentation = value;
+        }
+        #endregion
+
+        #region Получение грани с помощью пользовательского выбора
+        public void GetEdgeBySelection()
+        {
+            EdgeForSweep = RevitGeometryUtils.GetEdgeBySelection(Uiapp, out _edgeRepresentation);
+        }
+        #endregion
 
     }
 }
