@@ -29,7 +29,7 @@ namespace SideWalkSlab
             Doc = uiapp.ActiveUIDocument.Document;
         }
 
-        #region Грань для построения края плиты
+        #region Ребро для построения края плиты
         public Edge EdgeForSweep { get; set; }
 
         private string _edgeRepresentation;
@@ -40,11 +40,27 @@ namespace SideWalkSlab
         }
         #endregion
 
-        #region Получение грани с помощью пользовательского выбора
+        #region Получение ребра с помощью пользовательского выбора
         public void GetEdgeBySelection()
         {
             EdgeForSweep = RevitGeometryUtils.GetEdgeBySelection(Uiapp, out _edgeRepresentation);
         }
+
+        #region Проверка на то существует ли ребро в модели
+        public bool IsEdgeExistInModel(string edgeRepresentation)
+        {
+            return RevitGeometryUtils.IsEdgeExistInModel(Doc, edgeRepresentation);
+        }
+        #endregion
+
+        #region Получение ребра из Settings
+        public void GetEdgeBySettings(string edgeRepresentation)
+        {
+            Reference reference = Reference.ParseFromStableRepresentation(Doc, edgeRepresentation);
+
+            EdgeForSweep = Doc.GetElement(reference).GetGeometryObjectFromReference(reference) as Edge;
+        }
+        #endregion
 
         #region Линии края плиты
         public List<Curve> SideWalkLines { get; set; }

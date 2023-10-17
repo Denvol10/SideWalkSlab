@@ -97,6 +97,7 @@ namespace SideWalkSlab.ViewModels
         private void OnCreateSideWalkCommandExecuted(object parameter)
         {
             RevitModel.CreateSideWalk();
+            SaveSettings();
         }
 
         private bool CanCreateSideWalkCommandExecute(object parameter)
@@ -110,6 +111,7 @@ namespace SideWalkSlab.ViewModels
 
         private void OnCloseWindowCommandExecuted(object parameter)
         {
+            SaveSettings();
             RevitCommand.mainView.Close();
         }
 
@@ -121,10 +123,32 @@ namespace SideWalkSlab.ViewModels
 
         #endregion
 
+        private void SaveSettings()
+        {
+            Properties.Settings.Default.EdgeRepresentation = EdgeRepresentation;
+            Properties.Settings.Default.Save();
+        }
+
         #region Конструктор класса MainWindowViewModel
         public MainWindowViewModel(RevitModelForfard revitModel)
         {
             RevitModel = revitModel;
+
+            #region Инициализация объектов из Settings
+
+            #region Получение ребра из Settings
+            if (!(Properties.Settings.Default.EdgeRepresentation is null))
+            {
+                string edgeRepresentation = Properties.Settings.Default.EdgeRepresentation;
+                if (RevitModel.IsEdgeExistInModel(edgeRepresentation) && !string.IsNullOrEmpty(edgeRepresentation))
+                {
+                    EdgeRepresentation = edgeRepresentation;
+                    RevitModel.GetEdgeBySettings(edgeRepresentation);
+                }
+            }
+            #endregion
+
+            #endregion
 
             #region Команды
 

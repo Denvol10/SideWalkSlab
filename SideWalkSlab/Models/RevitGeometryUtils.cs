@@ -26,6 +26,62 @@ namespace SideWalkSlab.Models
             return edge;
         }
 
+        // Проверка на то существует ли ребро в модели
+        public static bool IsEdgeExistInModel(Document doc, string edgeRepresentation)
+        {
+            if (string.IsNullOrEmpty(edgeRepresentation))
+            {
+                return false;
+            }
+
+            try
+            {
+                Reference reference = Reference.ParseFromStableRepresentation(doc, edgeRepresentation);
+                if (reference is null)
+                {
+                    return false;
+                }
+            }
+            catch (Autodesk.Revit.Exceptions.ArgumentException)
+            {
+                return false;
+            }
+            catch (ArgumentNullException)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        // Получение ребра из Reference
+        public static Edge GetEdgeByReference(Document doc, string edgeRepresentation)
+        {
+            Reference reference = Reference.ParseFromStableRepresentation(doc, edgeRepresentation);
+
+            string[] elementInfo = edgeRepresentation.Split(':');
+            int edgeId = int.Parse(elementInfo.ElementAt(elementInfo.Length - 2));
+
+            Element element = doc.GetElement(reference.ElementId);
+            Options options = new Options();
+            var elementGeometry = element.get_Geometry(options);
+            var elementGeometryInstance = elementGeometry.OfType<GeometryInstance>().First();
+            var edgeArrays = elementGeometryInstance.GetInstanceGeometry().OfType<Solid>().Select(s => s.Edges);
+            foreach (var edgeArray in edgeArrays)
+            {
+                foreach (var edgeObject in edgeArray)
+                {
+                    if (edgeObject is Edge edge && edge.Id == edgeId)
+                    {
+                        return edge;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+
         // Получение линий края плиты с помощью пользовательского выбора
         public static List<Curve> GetSideWalkLinesBySelection(UIApplication uiapp, out string sideWalkLineElemIds)
         {
@@ -94,5 +150,6 @@ namespace SideWalkSlab.Models
 
             return resultString;
         }
+
     }
 }
