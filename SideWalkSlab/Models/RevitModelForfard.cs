@@ -45,7 +45,31 @@ namespace SideWalkSlab
         {
             EdgeForSweep = RevitGeometryUtils.GetEdgeBySelection(Uiapp, out _edgeRepresentation);
         }
+
+        public void CreateSideWalk()
+        {
+            Curve edgeCurve = EdgeForSweep.AsCurve();
+            double curveLength = edgeCurve.Length;
+            double step = 1.5;
+            step = UnitUtils.ConvertToInternalUnits(step, UnitTypeId.Meters);
+            int count = (int)(curveLength / step);
+            var parameters = RevitGeometryUtils.GenerateNormalizeParameters(count);
+
+            using (Transaction trans = new Transaction(Doc, "Create Side Walk"))
+            {
+                trans.Start();
+                foreach (var parameter in parameters)
+                {
+                    Transform transform = edgeCurve.ComputeDerivatives(parameter, true);
+                    XYZ point = transform.Origin + transform.BasisZ.Normalize() * step;
+                    Doc.FamilyCreate.NewReferencePoint(point);
+                }
+                trans.Commit();
+            }
+        }
         #endregion
+
+
 
     }
 }

@@ -69,7 +69,7 @@ namespace SideWalkSlab.ViewModels
 
         private void OnCreateSideWalkCommandExecuted(object parameter)
         {
-
+            RevitModel.CreateSideWalk();
         }
 
         private bool CanCreateSideWalkCommandExecute(object parameter)
