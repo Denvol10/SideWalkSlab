@@ -46,6 +46,24 @@ namespace SideWalkSlab
             EdgeForSweep = RevitGeometryUtils.GetEdgeBySelection(Uiapp, out _edgeRepresentation);
         }
 
+        #region Линии края плиты
+        public List<Curve> SideWalkLines { get; set; }
+
+        private string _sideWalkLineElemIds;
+        public string SideWalkLineElemIds
+        {
+            get => _sideWalkLineElemIds;
+            set => _sideWalkLineElemIds = value;
+        }
+        #endregion
+
+        #region Получение линий края плиты с помощью пользовательского выбора
+        public void GetSideWalkLinesBySelection()
+        {
+            SideWalkLines = RevitGeometryUtils.GetSideWalkLinesBySelection(Uiapp, out _sideWalkLineElemIds);
+        }
+        #endregion
+
         public void CreateSideWalk()
         {
             Curve edgeCurve = EdgeForSweep.AsCurve();
@@ -68,8 +86,5 @@ namespace SideWalkSlab
             }
         }
         #endregion
-
-
-
     }
 }

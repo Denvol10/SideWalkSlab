@@ -45,6 +45,16 @@ namespace SideWalkSlab.ViewModels
         }
         #endregion
 
+        #region Линии края плиты
+        private string _sideWalkLineIds;
+
+        public string SideWalkLineIds
+        {
+            get => _sideWalkLineIds;
+            set => Set(ref _sideWalkLineIds, value);
+        }
+        #endregion
+
         #region Команды
 
         #region Получить ребро элемента
@@ -59,6 +69,23 @@ namespace SideWalkSlab.ViewModels
         }
 
         private bool CanGetEdgeCommandExecute(object parameter)
+        {
+            return true;
+        }
+        #endregion
+
+        #region Получить линии края плиты
+        public ICommand GetSideWalkLinesCommand { get; }
+
+        private void OnGetSideWalkLinesCommandExecuted(object parameter)
+        {
+            RevitCommand.mainView.Hide();
+            RevitModel.GetSideWalkLinesBySelection();
+            SideWalkLineIds = RevitModel.SideWalkLineElemIds;
+            RevitCommand.mainView.ShowDialog();
+        }
+
+        private bool CanGetSideWalkLinesCommandExecute(object parameter)
         {
             return true;
         }
@@ -102,6 +129,8 @@ namespace SideWalkSlab.ViewModels
             #region Команды
 
             GetEdgeCommand = new LambdaCommand(OnGetEdgeCommandExecuted, CanGetEdgeCommandExecute);
+
+            GetSideWalkLinesCommand = new LambdaCommand(OnGetSideWalkLinesCommandExecuted, CanGetSideWalkLinesCommandExecute);
 
             CreateSideWalkCommand = new LambdaCommand(OnCreateSideWalkCommandExecuted, CanCreateSideWalkCommandExecute);
 

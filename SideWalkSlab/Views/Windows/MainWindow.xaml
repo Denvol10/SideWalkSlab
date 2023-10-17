@@ -81,6 +81,21 @@
                          Style="{StaticResource SelectedItemsBox}" />
             </UniformGrid>
         </GroupBox>
+        <GroupBox Header="Край плиты"
+                  Style="{StaticResource BorderGroupStyle}">
+            <StackPanel>
+                <UniformGrid Columns="2">
+                    <UniformGrid Rows="2">
+                        <TextBlock Text="Линии края плиты"
+                                   Style="{StaticResource TextAboveButton}" />
+                        <Button Style="{StaticResource SelectButton}"
+                                Command="{Binding GetSideWalkLinesCommand}" />
+                    </UniformGrid>
+                    <TextBox Text="{Binding SideWalkLineIds}"
+                             Style="{StaticResource SelectedItemsBox}" />
+                </UniformGrid>
+            </StackPanel>
+        </GroupBox>
         <GroupBox Header="Создать крайний элемент плиты"
                   Style="{StaticResource BorderGroupStyle}">
             <UniformGrid Columns="2">
