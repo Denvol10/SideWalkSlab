@@ -66,6 +66,11 @@
             <Setter Property="Margin"
                     Value="2,0,3,0" />
         </Style>
+        <Style x:Key="CheckBoxStyle"
+               TargetType="CheckBox">
+            <Setter Property="VerticalAlignment"
+                    Value="Center" />
+        </Style>
     </Window.Resources>
     <StackPanel>
         <GroupBox Header="Ребро для построения"
@@ -84,13 +89,20 @@
         <GroupBox Header="Край плиты"
                   Style="{StaticResource BorderGroupStyle}">
             <StackPanel>
-                <UniformGrid Rows="2">
-                    <TextBlock Text="Тип края плиты"
-                               Style="{StaticResource TextAboveButton}" />
-                    <ComboBox Width="150"
-                              Margin="0,2,0,0"
-                              ItemsSource="{Binding SideWalkFamilySymbols}"
-                              SelectedItem="{Binding FamilySymbolName}" />
+                <UniformGrid Columns="2">
+                    <UniformGrid Rows="2">
+                        <TextBlock Text="Тип края плиты"
+                                   Style="{StaticResource TextAboveButton}" />
+                        <ComboBox Width="150"
+                                  Margin="0,2,0,0"
+                                  ItemsSource="{Binding SideWalkFamilySymbols}"
+                                  SelectedItem="{Binding FamilySymbolName}" />
+                    </UniformGrid>
+                    <CheckBox Content="Развернуть"
+                              Style="{StaticResource CheckBoxStyle}"
+                              VerticalAlignment="Top"
+                              Margin="5,5,0,0"
+                              IsChecked="{Binding IsIncludeStartPost}" />
                 </UniformGrid>
             </StackPanel>
         </GroupBox>
