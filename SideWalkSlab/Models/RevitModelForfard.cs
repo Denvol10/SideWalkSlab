@@ -111,11 +111,58 @@ namespace SideWalkSlab
                 foreach (var parameter in parameters)
                 {
                     Transform transform = edgeCurve.ComputeDerivatives(parameter, true);
-                    XYZ point = transform.Origin + transform.BasisZ.Normalize() * step;
-                    Doc.FamilyCreate.NewReferencePoint(point);
+
+                    foreach (var curve in SideWalkLines)
+                    {
+                        
+                    }
+
                 }
                 trans.Commit();
             }
+        }
+        #endregion
+
+        #region Получение списка названий типоразмеров семейств
+        public ObservableCollection<FamilySymbolSelector> GetFamilySymbolNames()
+        {
+            var familySymbolNames = new ObservableCollection<FamilySymbolSelector>();
+            var allFamilies = new FilteredElementCollector(Doc).OfClass(typeof(Family)).OfType<Family>();
+            var structuralFramingFamilies = allFamilies.Where(f => f.FamilyCategory.Id.IntegerValue
+                                                              == (int)BuiltInCategory.OST_GenericModel);
+            if (structuralFramingFamilies.Count() == 0)
+                return familySymbolNames;
+
+            foreach (var family in structuralFramingFamilies)
+            {
+                foreach (var symbolId in family.GetFamilySymbolIds())
+                {
+                    var familySymbol = Doc.GetElement(symbolId);
+                    familySymbolNames.Add(new FamilySymbolSelector(family.Name, familySymbol.Name));
+                }
+            }
+
+            return familySymbolNames;
+        }
+        #endregion
+
+        #region Получение типоразмера по имени
+        private FamilySymbol GetFamilySymbolByName(FamilySymbolSelector familyAndSymbolName)
+        {
+            var familyName = familyAndSymbolName.FamilyName;
+            var symbolName = familyAndSymbolName.SymbolName;
+
+            Family family = new FilteredElementCollector(Doc).OfClass(typeof(Family)).Where(f => f.Name == familyName).First() as Family;
+            var symbolIds = family.GetFamilySymbolIds();
+            foreach (var symbolId in symbolIds)
+            {
+                FamilySymbol fSymbol = (FamilySymbol)Doc.GetElement(symbolId);
+                if (fSymbol.get_Parameter(BuiltInParameter.SYMBOL_NAME_PARAM).AsString() == symbolName)
+                {
+                    return fSymbol;
+                }
+            }
+            return null;
         }
         #endregion
     }

@@ -12,6 +12,7 @@ using Autodesk.Revit.DB.Architecture;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using SideWalkSlab.Infrastructure;
+using SideWalkSlab.Models;
 
 namespace SideWalkSlab.ViewModels
 {
@@ -52,6 +53,24 @@ namespace SideWalkSlab.ViewModels
         {
             get => _sideWalkLineIds;
             set => Set(ref _sideWalkLineIds, value);
+        }
+        #endregion
+
+        #region Список семейств и их типоразмеров
+        private ObservableCollection<FamilySymbolSelector> _sideWalkFamilySymbols = new ObservableCollection<FamilySymbolSelector>();
+        public ObservableCollection<FamilySymbolSelector> SideWalkFamilySymbols
+        {
+            get => _sideWalkFamilySymbols;
+            set => Set(ref _sideWalkFamilySymbols, value);
+        }
+        #endregion
+
+        #region Выбранный типоразмер семейства
+        private FamilySymbolSelector _familySymbolName;
+        public FamilySymbolSelector FamilySymbolName
+        {
+            get => _familySymbolName;
+            set => Set(ref _familySymbolName, value);
         }
         #endregion
 
@@ -134,6 +153,8 @@ namespace SideWalkSlab.ViewModels
         public MainWindowViewModel(RevitModelForfard revitModel)
         {
             RevitModel = revitModel;
+
+            SideWalkFamilySymbols = RevitModel.GetFamilySymbolNames();
 
             #region Инициализация объектов из Settings
 

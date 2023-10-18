@@ -84,15 +84,13 @@
         <GroupBox Header="Край плиты"
                   Style="{StaticResource BorderGroupStyle}">
             <StackPanel>
-                <UniformGrid Columns="2">
-                    <UniformGrid Rows="2">
-                        <TextBlock Text="Линии края плиты"
-                                   Style="{StaticResource TextAboveButton}" />
-                        <Button Style="{StaticResource SelectButton}"
-                                Command="{Binding GetSideWalkLinesCommand}" />
-                    </UniformGrid>
-                    <TextBox Text="{Binding SideWalkLineIds}"
-                             Style="{StaticResource SelectedItemsBox}" />
+                <UniformGrid Rows="2">
+                    <TextBlock Text="Тип края плиты"
+                               Style="{StaticResource TextAboveButton}" />
+                    <ComboBox Width="150"
+                              Margin="0,2,0,0"
+                              ItemsSource="{Binding SideWalkFamilySymbols}"
+                              SelectedItem="{Binding FamilySymbolName}" />
                 </UniformGrid>
             </StackPanel>
         </GroupBox>
