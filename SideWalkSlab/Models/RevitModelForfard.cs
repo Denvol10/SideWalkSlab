@@ -11,6 +11,8 @@ using Autodesk.Revit.UI.Selection;
 using Autodesk.Revit.DB.Architecture;
 using System.Collections.ObjectModel;
 using SideWalkSlab.Models;
+using System.IO;
+using System.Windows.Media;
 
 namespace SideWalkSlab
 {
@@ -96,28 +98,80 @@ namespace SideWalkSlab
         }
         #endregion
 
-        public void CreateSideWalk()
+        public void CreateSideWalk(FamilySymbolSelector sideWalkFamilySelector)
         {
+            FamilySymbol sideWalkFamilySymbol = GetFamilySymbolByName(sideWalkFamilySelector);
+            var sideWalkCurves = new List<Curve>();
+
+            string resultPath = @"O:\Revit Infrastructure Tools\SideWalkSlab\SideWalkSlab\result.txt";
+
+            FamilyInstance sideWalkInstance = null;
+            using (Transaction trans = new Transaction(Doc, "Create Side Walk Instance"))
+            {
+                trans.Start();
+                if (!sideWalkFamilySymbol.IsActive)
+                {
+                    sideWalkFamilySymbol.Activate();
+                }
+
+                sideWalkInstance = Doc.FamilyCreate.NewFamilyInstance(XYZ.Zero, sideWalkFamilySymbol, Autodesk.Revit.DB.Structure.StructuralType.NonStructural);
+                trans.Commit();
+            }
+
+            using (Transaction trans = new Transaction(Doc, "Get Curves and Delete Side Walk Instance"))
+            {
+                trans.Start();
+                var sideWalkCurvesGeometryInstanse = sideWalkInstance.get_Geometry(new Options()).OfType<GeometryInstance>().First();
+                sideWalkCurves = sideWalkCurvesGeometryInstanse.GetSymbolGeometry().OfType<Curve>().Select(c => c.Clone()).ToList();
+                Doc.Delete(sideWalkInstance.Id);
+                trans.Commit();
+            }
+
             Curve edgeCurve = EdgeForSweep.AsCurve();
             double curveLength = edgeCurve.Length;
             double step = 1.5;
             step = UnitUtils.ConvertToInternalUnits(step, UnitTypeId.Meters);
             int count = (int)(curveLength / step);
             var parameters = RevitGeometryUtils.GenerateNormalizeParameters(count);
+            var transforms = parameters.Select(p => edgeCurve.ComputeDerivatives(p, true));
 
-            using (Transaction trans = new Transaction(Doc, "Create Side Walk"))
+            //using (StreamWriter sw = new StreamWriter(resultPath, false, Encoding.Default))
+            //{
+            //    foreach (var transform in transforms)
+            //    {
+            //        sw.WriteLine(transform.BasisX.Normalize());
+            //        sw.WriteLine(new XYZ(transform.BasisX.X, transform.BasisX.Y, 0).Normalize());
+            //    }
+            //}
+
+            using (Transaction trans = new Transaction(Doc, "Form Created"))
             {
                 trans.Start();
-                foreach (var parameter in parameters)
+                foreach (var transform in transforms)
                 {
-                    Transform transform = edgeCurve.ComputeDerivatives(parameter, true);
+                    XYZ basePoint = transform.Origin;
+                    XYZ vec1 = new XYZ(transform.BasisX.X, transform.BasisX.Y, 0).Normalize();
+                    XYZ vec2 = XYZ.BasisZ;
+                    XYZ vec3 = vec2.CrossProduct(vec1).Normalize();
 
-                    foreach (var curve in SideWalkLines)
+                    Frame frame = new Frame(basePoint, vec3, vec2, vec1);
+
+                    Plane plane = Plane.Create(frame);
+
+                    //Doc.FamilyCreate.NewReferencePoint(plane.Origin);
+                    //Doc.FamilyCreate.NewReferencePoint(plane.Origin + plane.YVec);
+
+                    foreach (var curve in sideWalkCurves)
                     {
-                        
+                        XYZ firstPoint = curve.GetEndPoint(0);
+                        XYZ sideWalkFirstPoint = plane.Origin - plane.XVec * firstPoint.X + plane.YVec * firstPoint.Y;
+                        Doc.FamilyCreate.NewReferencePoint(sideWalkFirstPoint);
                     }
 
+
                 }
+
+
                 trans.Commit();
             }
         }

@@ -115,7 +115,7 @@ namespace SideWalkSlab.ViewModels
 
         private void OnCreateSideWalkCommandExecuted(object parameter)
         {
-            RevitModel.CreateSideWalk();
+            RevitModel.CreateSideWalk(FamilySymbolName);
             SaveSettings();
         }
 
