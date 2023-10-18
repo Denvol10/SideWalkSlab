@@ -127,13 +127,19 @@ namespace SideWalkSlab
                 trans.Commit();
             }
 
-            Curve edgeCurve = EdgeForSweep.AsCurve();
+            Curve edgeCurve = EdgeForSweep.AsCurve().Clone();
             double curveLength = edgeCurve.Length;
+            double extension = UnitUtils.ConvertToInternalUnits(1, UnitTypeId.Meters);
+            edgeCurve.MakeUnbound();
+            edgeCurve.MakeBound(-extension, curveLength + extension);
             double step = 1.5;
             step = UnitUtils.ConvertToInternalUnits(step, UnitTypeId.Meters);
             int count = (int)(curveLength / step);
-            var parameters = RevitGeometryUtils.GenerateNormalizeParameters(count);
-            var transforms = parameters.Select(p => edgeCurve.ComputeDerivatives(p, true));
+            var normalparameters = RevitGeometryUtils.GenerateNormalizeParameters(count);
+            var rowParameters = normalparameters.Select(p => edgeCurve.ComputeRawParameter(p));
+
+
+            var transforms = rowParameters.Select(p => edgeCurve.ComputeDerivatives(p, false));
 
             //using (StreamWriter sw = new StreamWriter(resultPath, false, Encoding.Default))
             //{
