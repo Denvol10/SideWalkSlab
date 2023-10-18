@@ -64,46 +64,10 @@ namespace SideWalkSlab
         }
         #endregion
 
-        #region Линии края плиты
-        public List<Curve> SideWalkLines { get; set; }
-
-        private string _sideWalkLineElemIds;
-        public string SideWalkLineElemIds
-        {
-            get => _sideWalkLineElemIds;
-            set => _sideWalkLineElemIds = value;
-        }
-        #endregion
-
-        #region Получение линий края плиты с помощью пользовательского выбора
-        public void GetSideWalkLinesBySelection()
-        {
-            SideWalkLines = RevitGeometryUtils.GetSideWalkLinesBySelection(Uiapp, out _sideWalkLineElemIds);
-        }
-        #endregion
-
-        #region Проверка на то, существуют линии в модели
-        public bool IsModelCurvesExistInModel(string modelCurvesIds)
-        {
-            var elemIds = RevitGeometryUtils.GetIdsByString(modelCurvesIds);
-
-            return RevitGeometryUtils.IsElemsExistInModel(Doc, elemIds, typeof(ModelCurve));
-        }
-        #endregion
-
-        #region Получение линий края плиты из Settings
-        public void GetSideWalkLinesBySettings(string elemIdsInSettings)
-        {
-            SideWalkLines = RevitGeometryUtils.GetCurvesById(Doc, elemIdsInSettings);
-        }
-        #endregion
-
         public void CreateSideWalk(FamilySymbolSelector sideWalkFamilySelector)
         {
             FamilySymbol sideWalkFamilySymbol = GetFamilySymbolByName(sideWalkFamilySelector);
             var sideWalkCurves = new List<Curve>();
-
-            string resultPath = @"O:\Revit Infrastructure Tools\SideWalkSlab\SideWalkSlab\result.txt";
 
             FamilyInstance sideWalkInstance = null;
             using (Transaction trans = new Transaction(Doc, "Create Side Walk Instance"))
@@ -138,17 +102,7 @@ namespace SideWalkSlab
             var normalparameters = RevitGeometryUtils.GenerateNormalizeParameters(count);
             var rowParameters = normalparameters.Select(p => edgeCurve.ComputeRawParameter(p));
 
-
             var transforms = rowParameters.Select(p => edgeCurve.ComputeDerivatives(p, false));
-
-            //using (StreamWriter sw = new StreamWriter(resultPath, false, Encoding.Default))
-            //{
-            //    foreach (var transform in transforms)
-            //    {
-            //        sw.WriteLine(transform.BasisX.Normalize());
-            //        sw.WriteLine(new XYZ(transform.BasisX.X, transform.BasisX.Y, 0).Normalize());
-            //    }
-            //}
 
             using (Transaction trans = new Transaction(Doc, "Form Created"))
             {
@@ -161,7 +115,6 @@ namespace SideWalkSlab
                     XYZ vec1 = new XYZ(transform.BasisX.X, transform.BasisX.Y, 0).Normalize();
                     XYZ vec2 = XYZ.BasisZ;
                     XYZ vec3 = vec2.CrossProduct(vec1).Normalize();
-
                     Frame frame = new Frame(basePoint, vec3, vec2, vec1);
 
                     Plane plane = Plane.Create(frame);
@@ -174,16 +127,16 @@ namespace SideWalkSlab
                         XYZ firstPoint = curve.GetEndPoint(0);
                         XYZ sideWalkFirstPoint = plane.Origin - plane.XVec * firstPoint.X + plane.YVec * firstPoint.Y;
                         var firstReferencePoint = Doc.FamilyCreate.NewReferencePoint(sideWalkFirstPoint);
+
                         XYZ secondPoint = curve.GetEndPoint(1);
                         XYZ sideWalkSecondPoint = plane.Origin - plane.XVec * secondPoint.X + plane.YVec * secondPoint.Y;
                         var secondReferencePoint = Doc.FamilyCreate.NewReferencePoint(sideWalkSecondPoint);
+
                         referencePointArray.Append(firstReferencePoint);
                         referencePointArray.Append(secondReferencePoint);
 
                         CurveByPoints curveByPoints = Doc.FamilyCreate.NewCurveByPoints(referencePointArray);
                         sideWalkSectionCurves.Append(curveByPoints.GeometryCurve.Reference);
-
-                        //Doc.FamilyCreate.NewReferencePoint(sideWalkFirstPoint);
                     }
 
                     curvesForLoft.Append(sideWalkSectionCurves);

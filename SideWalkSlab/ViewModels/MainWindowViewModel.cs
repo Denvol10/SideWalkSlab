@@ -46,16 +46,6 @@ namespace SideWalkSlab.ViewModels
         }
         #endregion
 
-        #region Линии края плиты
-        private string _sideWalkLineIds;
-
-        public string SideWalkLineIds
-        {
-            get => _sideWalkLineIds;
-            set => Set(ref _sideWalkLineIds, value);
-        }
-        #endregion
-
         #region Список семейств и их типоразмеров
         private ObservableCollection<FamilySymbolSelector> _sideWalkFamilySymbols = new ObservableCollection<FamilySymbolSelector>();
         public ObservableCollection<FamilySymbolSelector> SideWalkFamilySymbols
@@ -88,23 +78,6 @@ namespace SideWalkSlab.ViewModels
         }
 
         private bool CanGetEdgeCommandExecute(object parameter)
-        {
-            return true;
-        }
-        #endregion
-
-        #region Получить линии края плиты
-        public ICommand GetSideWalkLinesCommand { get; }
-
-        private void OnGetSideWalkLinesCommandExecuted(object parameter)
-        {
-            RevitCommand.mainView.Hide();
-            RevitModel.GetSideWalkLinesBySelection();
-            SideWalkLineIds = RevitModel.SideWalkLineElemIds;
-            RevitCommand.mainView.ShowDialog();
-        }
-
-        private bool CanGetSideWalkLinesCommandExecute(object parameter)
         {
             return true;
         }
@@ -145,7 +118,6 @@ namespace SideWalkSlab.ViewModels
         private void SaveSettings()
         {
             Properties.Settings.Default.EdgeRepresentation = EdgeRepresentation;
-            Properties.Settings.Default.SideWalkLineIds = SideWalkLineIds;
             Properties.Settings.Default.Save();
         }
 
@@ -170,25 +142,11 @@ namespace SideWalkSlab.ViewModels
             }
             #endregion
 
-            #region Получение линий края плиты из Settings
-            if (!(Properties.Settings.Default.SideWalkLineIds is null))
-            {
-                string sideWalkLinesInSettings = Properties.Settings.Default.SideWalkLineIds;
-                if (RevitModel.IsModelCurvesExistInModel(sideWalkLinesInSettings) && !string.IsNullOrEmpty(sideWalkLinesInSettings))
-                {
-                    SideWalkLineIds = sideWalkLinesInSettings;
-                    RevitModel.GetSideWalkLinesBySettings(sideWalkLinesInSettings);
-                }
-            }
-            #endregion
-
             #endregion
 
             #region Команды
 
             GetEdgeCommand = new LambdaCommand(OnGetEdgeCommandExecuted, CanGetEdgeCommandExecute);
-
-            GetSideWalkLinesCommand = new LambdaCommand(OnGetSideWalkLinesCommandExecuted, CanGetSideWalkLinesCommandExecute);
 
             CreateSideWalkCommand = new LambdaCommand(OnCreateSideWalkCommandExecuted, CanCreateSideWalkCommandExecute);
 
