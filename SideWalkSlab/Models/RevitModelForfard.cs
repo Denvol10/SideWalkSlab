@@ -153,6 +153,8 @@ namespace SideWalkSlab
             using (Transaction trans = new Transaction(Doc, "Form Created"))
             {
                 trans.Start();
+                ReferenceArrayArray curvesForLoft = new ReferenceArrayArray();
+
                 foreach (var transform in transforms)
                 {
                     XYZ basePoint = transform.Origin;
@@ -164,19 +166,30 @@ namespace SideWalkSlab
 
                     Plane plane = Plane.Create(frame);
 
-                    //Doc.FamilyCreate.NewReferencePoint(plane.Origin);
-                    //Doc.FamilyCreate.NewReferencePoint(plane.Origin + plane.YVec);
+                    ReferenceArray sideWalkSectionCurves = new ReferenceArray();
 
                     foreach (var curve in sideWalkCurves)
                     {
+                        ReferencePointArray referencePointArray = new ReferencePointArray();
                         XYZ firstPoint = curve.GetEndPoint(0);
                         XYZ sideWalkFirstPoint = plane.Origin - plane.XVec * firstPoint.X + plane.YVec * firstPoint.Y;
-                        Doc.FamilyCreate.NewReferencePoint(sideWalkFirstPoint);
+                        var firstReferencePoint = Doc.FamilyCreate.NewReferencePoint(sideWalkFirstPoint);
+                        XYZ secondPoint = curve.GetEndPoint(1);
+                        XYZ sideWalkSecondPoint = plane.Origin - plane.XVec * secondPoint.X + plane.YVec * secondPoint.Y;
+                        var secondReferencePoint = Doc.FamilyCreate.NewReferencePoint(sideWalkSecondPoint);
+                        referencePointArray.Append(firstReferencePoint);
+                        referencePointArray.Append(secondReferencePoint);
+
+                        CurveByPoints curveByPoints = Doc.FamilyCreate.NewCurveByPoints(referencePointArray);
+                        sideWalkSectionCurves.Append(curveByPoints.GeometryCurve.Reference);
+
+                        //Doc.FamilyCreate.NewReferencePoint(sideWalkFirstPoint);
                     }
 
-
+                    curvesForLoft.Append(sideWalkSectionCurves);
                 }
 
+                var loftForm = Doc.FamilyCreate.NewLoftForm(true, curvesForLoft);
 
                 trans.Commit();
             }
