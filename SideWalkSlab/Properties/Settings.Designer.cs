@@ -46,5 +46,17 @@ namespace SideWalkSlab.Properties {
                 this["FamilySymbolIndex"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ReverseSideWalk {
+            get {
+                return ((bool)(this["ReverseSideWalk"]));
+            }
+            set {
+                this["ReverseSideWalk"] = value;
+            }
+        }
     }
 }

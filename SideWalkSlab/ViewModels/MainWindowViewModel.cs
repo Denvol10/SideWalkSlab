@@ -69,7 +69,7 @@ namespace SideWalkSlab.ViewModels
         #endregion
 
         #region Развернуть край плиты
-        private bool _reverseSideWalk;
+        private bool _reverseSideWalk = Properties.Settings.Default.ReverseSideWalk;
         public bool ReverseSideWalk
         {
             get => _reverseSideWalk;
@@ -132,6 +132,7 @@ namespace SideWalkSlab.ViewModels
         {
             Properties.Settings.Default.EdgeRepresentation = EdgeRepresentation;
             Properties.Settings.Default.FamilySymbolIndex = SideWalkFamilySymbols.IndexOf(FamilySymbolName);
+            Properties.Settings.Default.ReverseSideWalk = ReverseSideWalk;
             Properties.Settings.Default.Save();
         }
 
