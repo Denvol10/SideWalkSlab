@@ -86,6 +86,24 @@ namespace SideWalkSlab.ViewModels
         }
         #endregion
 
+        #region Линии подрезки 1
+        private string _cutLineIds1;
+        public string CutLineIds1
+        {
+            get => _cutLineIds1;
+            set => Set(ref _cutLineIds1, value);
+        }
+        #endregion
+
+        #region Линии подрезки 2
+        private string _cutLineIds2;
+        public string CutLinesIds2
+        {
+            get => _cutLineIds2;
+            set => Set(ref _cutLineIds2, value);
+        }
+        #endregion
+
         #region Команды
 
         #region Получить ребро элемента
@@ -105,6 +123,40 @@ namespace SideWalkSlab.ViewModels
         }
         #endregion
 
+        #region Получить линии подрезки 1
+        public ICommand GetCutLines1Command { get; }
+
+        private void OnGetCutLines1CommandExecuted(object parameter)
+        {
+            RevitCommand.mainView.Hide();
+            RevitModel.GetCutLines1BySelection();
+            CutLineIds1 = RevitModel.CutLinesIds1;
+            RevitCommand.mainView.ShowDialog();
+        }
+
+        private bool CanGetCutLines1CommandExecute(object parameter)
+        {
+            return true;
+        }
+        #endregion
+
+        #region Получить линии подрезки 2
+        public ICommand GetCutLines2Command { get; }
+
+        private void OnGetCutLines2CommandExecuted(object parameter)
+        {
+            RevitCommand.mainView.Hide();
+            RevitModel.GetCutLines2BySelection();
+            CutLinesIds2 = RevitModel.CutLinesIds2;
+            RevitCommand.mainView.ShowDialog();
+        }
+
+        private bool CanGetCutLines2CommandExecute(object parameter)
+        {
+            return true;
+        }
+        #endregion
+
         #region Создать край плиты
         public ICommand CreateSideWalkCommand { get; }
 
@@ -112,6 +164,7 @@ namespace SideWalkSlab.ViewModels
         {
             RevitModel.CreateSideWalk(FamilySymbolName, ReverseSideWalk, SectionStep);
             SaveSettings();
+            RevitCommand.mainView.Close();
         }
 
         private bool CanCreateSideWalkCommandExecute(object parameter)
@@ -179,6 +232,10 @@ namespace SideWalkSlab.ViewModels
             #region Команды
 
             GetEdgeCommand = new LambdaCommand(OnGetEdgeCommandExecuted, CanGetEdgeCommandExecute);
+
+            GetCutLines1Command = new LambdaCommand(OnGetCutLines1CommandExecuted, CanGetCutLines1CommandExecute);
+
+            GetCutLines2Command = new LambdaCommand(OnGetCutLines2CommandExecuted, CanGetCutLines2CommandExecute);
 
             CreateSideWalkCommand = new LambdaCommand(OnCreateSideWalkCommandExecuted, CanCreateSideWalkCommandExecute);
 

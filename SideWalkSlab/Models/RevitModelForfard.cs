@@ -64,6 +64,46 @@ namespace SideWalkSlab
         }
         #endregion
 
+        #region Максимальная высота плиты
+        private double MaxSlabHeight { get; set; }
+        #endregion
+
+        #region Линии подрезки 1
+        public List<Curve> CutLines1;
+
+        private string _cutLineIds1;
+        public string CutLinesIds1
+        {
+            get => _cutLineIds1;
+            set => _cutLineIds1 = value;
+        }
+        #endregion
+
+        #region Получение линий подрезки 1 с помощью пользовательского выбора
+        public void GetCutLines1BySelection()
+        {
+            CutLines1 = RevitGeometryUtils.GetCurvesBySelection(Uiapp, out _cutLineIds1);
+        }
+        #endregion
+
+        #region Линии подрезки 2
+        public List<Curve> CutLines2;
+
+        private string _cutLinesIds2;
+        public string CutLinesIds2
+        {
+            get => _cutLinesIds2;
+            set => _cutLinesIds2 = value;
+        }
+        #endregion
+
+        #region Получение линий подрезки 2 с помощью пользовательского выбора
+        public void GetCutLines2BySelection()
+        {
+            CutLines2 = RevitGeometryUtils.GetCurvesBySelection(Uiapp, out _cutLinesIds2);
+        }
+        #endregion
+
         public void CreateSideWalk(FamilySymbolSelector sideWalkFamilySelector, bool reverseSideWalk, double sectionStep)
         {
             FamilySymbol sideWalkFamilySymbol = GetFamilySymbolByName(sideWalkFamilySelector);
@@ -107,10 +147,17 @@ namespace SideWalkSlab
             {
                 trans.Start();
                 ReferenceArrayArray curvesForLoft = new ReferenceArrayArray();
+                MaxSlabHeight = double.NegativeInfinity;
 
                 foreach (var transform in transforms)
                 {
                     XYZ basePoint = transform.Origin;
+
+                    if (transform.Origin.Z > MaxSlabHeight)
+                    {
+                        MaxSlabHeight = transform.Origin.Z;
+                    }
+
                     XYZ vec1 = new XYZ(transform.BasisX.X, transform.BasisX.Y, 0).Normalize();
                     XYZ vec2 = XYZ.BasisZ;
                     XYZ vec3 = vec2.CrossProduct(vec1).Normalize();

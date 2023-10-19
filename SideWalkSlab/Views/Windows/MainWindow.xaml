@@ -119,6 +119,32 @@
                 </UniformGrid>
             </StackPanel>
         </GroupBox>
+        <GroupBox Header="Подрезка"
+                  Style="{StaticResource BorderGroupStyle}">
+            <StackPanel>
+                <UniformGrid Columns="2">
+                    <UniformGrid Rows="2">
+                        <TextBlock Text="Линии подрезки 1"
+                                   Style="{StaticResource TextAboveButton}" />
+                        <Button Style="{StaticResource SelectButton}"
+                                Command="{Binding GetCutLines1Command}" />
+                    </UniformGrid>
+                    <TextBox Text="{Binding CutLineIds1}"
+                             Style="{StaticResource SelectedItemsBox}" />
+                </UniformGrid>
+                <UniformGrid Columns="2">
+                    <UniformGrid Rows="2"
+                                 Margin="0,5,0,0">
+                        <TextBlock Text="Линии подрезки 2"
+                                   Style="{StaticResource TextAboveButton}" />
+                        <Button Style="{StaticResource SelectButton}"
+                                Command="{Binding GetCutLines2Command}" />
+                    </UniformGrid>
+                    <TextBox Text="{Binding CutLinesIds2}"
+                             Style="{StaticResource SelectedItemsBox}" />
+                </UniformGrid>
+            </StackPanel>
+        </GroupBox>
         <GroupBox Header="Создать крайний элемент плиты"
                   Style="{StaticResource BorderGroupStyle}">
             <UniformGrid Columns="2">

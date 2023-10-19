@@ -82,15 +82,15 @@ namespace SideWalkSlab.Models
         }
 
 
-        // Получение линий края плиты с помощью пользовательского выбора
-        public static List<Curve> GetSideWalkLinesBySelection(UIApplication uiapp, out string sideWalkLineElemIds)
+        // Получение линий с помощью пользовательского выбора
+        public static List<Curve> GetCurvesBySelection(UIApplication uiapp, out string sideWalkLineElemIds)
         {
             Document doc = uiapp.ActiveUIDocument.Document;
             Selection sel = uiapp.ActiveUIDocument.Selection;
 
             var sideWalkLineRefererences = sel.PickObjects(ObjectType.Element,
                                                            new ModelCurveSelectionFilter(),
-                                                           "Выбереие линии границы плиты");
+                                                           "Выбереие линии подрезки плиты");
             Options options = new Options();
             var sideWalkModelCurves = sideWalkLineRefererences.Select(r => doc.GetElement(r));
             sideWalkLineElemIds = ElementIdToString(sideWalkModelCurves);
