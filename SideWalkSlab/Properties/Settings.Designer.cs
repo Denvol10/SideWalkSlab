@@ -70,5 +70,29 @@ namespace SideWalkSlab.Properties {
                 this["SectionStep"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string CutLineIds1 {
+            get {
+                return ((string)(this["CutLineIds1"]));
+            }
+            set {
+                this["CutLineIds1"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string CutLineIds2 {
+            get {
+                return ((string)(this["CutLineIds2"]));
+            }
+            set {
+                this["CutLineIds2"] = value;
+            }
+        }
     }
 }

@@ -97,7 +97,7 @@ namespace SideWalkSlab.ViewModels
 
         #region Линии подрезки 2
         private string _cutLineIds2;
-        public string CutLinesIds2
+        public string CutLineIds2
         {
             get => _cutLineIds2;
             set => Set(ref _cutLineIds2, value);
@@ -147,7 +147,7 @@ namespace SideWalkSlab.ViewModels
         {
             RevitCommand.mainView.Hide();
             RevitModel.GetCutLines2BySelection();
-            CutLinesIds2 = RevitModel.CutLinesIds2;
+            CutLineIds2 = RevitModel.CutLinesIds2;
             RevitCommand.mainView.ShowDialog();
         }
 
@@ -196,6 +196,8 @@ namespace SideWalkSlab.ViewModels
             Properties.Settings.Default.FamilySymbolIndex = SideWalkFamilySymbols.IndexOf(FamilySymbolName);
             Properties.Settings.Default.ReverseSideWalk = ReverseSideWalk;
             Properties.Settings.Default.SectionStep = SectionStep;
+            Properties.Settings.Default.CutLineIds1 = CutLineIds1;
+            Properties.Settings.Default.CutLineIds2 = CutLineIds2;
             Properties.Settings.Default.Save();
         }
 
@@ -224,6 +226,30 @@ namespace SideWalkSlab.ViewModels
             if (_familySymbolIndex >= 0 && _familySymbolIndex <= SideWalkFamilySymbols.Count - 1)
             {
                 FamilySymbolName = SideWalkFamilySymbols.ElementAt(_familySymbolIndex);
+            }
+            #endregion
+
+            #region Инициализация линий подрезки 1 из Settings
+            if (!(Properties.Settings.Default.CutLineIds1 is null))
+            {
+                string cutLineIdsInSettings = Properties.Settings.Default.CutLineIds1;
+                if (RevitModel.IsCutLinesExistInModel(cutLineIdsInSettings) && !string.IsNullOrEmpty(cutLineIdsInSettings))
+                {
+                    CutLineIds1 = cutLineIdsInSettings;
+                    RevitModel.GetCutLines1BySettings(cutLineIdsInSettings);
+                }
+            }
+            #endregion
+
+            #region Инициализация линий подрезки 2 из Settings
+            if (!(Properties.Settings.Default.CutLineIds2 is null))
+            {
+                string cutLineIdsInSettings = Properties.Settings.Default.CutLineIds2;
+                if (RevitModel.IsCutLinesExistInModel(cutLineIdsInSettings) && !string.IsNullOrEmpty(cutLineIdsInSettings))
+                {
+                    CutLineIds2 = cutLineIdsInSettings;
+                    RevitModel.GetCutLines2BySettings(cutLineIdsInSettings);
+                }
             }
             #endregion
 

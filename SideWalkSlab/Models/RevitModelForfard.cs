@@ -104,6 +104,29 @@ namespace SideWalkSlab
         }
         #endregion
 
+        #region Проверка на то существует линии подрезки плиты
+        public bool IsCutLinesExistInModel(string elemIdsInSettings)
+        {
+            var elemIds = RevitGeometryUtils.GetIdsByString(elemIdsInSettings);
+
+            return RevitGeometryUtils.IsElemsExistInModel(Doc, elemIds, typeof(ModelCurve));
+        }
+        #endregion
+
+        #region Получение линий подрезки 1 из Settings
+        public void GetCutLines1BySettings(string elemIdsInSettings)
+        {
+            CutLines1 = RevitGeometryUtils.GetCurvesById(Doc, elemIdsInSettings);
+        }
+        #endregion
+
+        #region Получение линий подрезки 2 из Settings
+        public void GetCutLines2BySettings(string elemIdsInSettings)
+        {
+            CutLines2 = RevitGeometryUtils.GetCurvesById(Doc, elemIdsInSettings);
+        }
+        #endregion
+
         public void CreateSideWalk(FamilySymbolSelector sideWalkFamilySelector, bool reverseSideWalk, double sectionStep)
         {
             FamilySymbol sideWalkFamilySymbol = GetFamilySymbolByName(sideWalkFamilySelector);

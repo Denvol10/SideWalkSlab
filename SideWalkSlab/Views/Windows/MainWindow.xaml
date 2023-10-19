@@ -140,7 +140,7 @@
                         <Button Style="{StaticResource SelectButton}"
                                 Command="{Binding GetCutLines2Command}" />
                     </UniformGrid>
-                    <TextBox Text="{Binding CutLinesIds2}"
+                    <TextBox Text="{Binding CutLineIds2}"
                              Style="{StaticResource SelectedItemsBox}" />
                 </UniformGrid>
             </StackPanel>
