@@ -98,11 +98,24 @@
                                   ItemsSource="{Binding SideWalkFamilySymbols}"
                                   SelectedItem="{Binding FamilySymbolName}" />
                     </UniformGrid>
-                    <CheckBox Content="Развернуть"
-                              Style="{StaticResource CheckBoxStyle}"
-                              VerticalAlignment="Top"
-                              Margin="5,5,0,0"
-                              IsChecked="{Binding ReverseSideWalk}" />
+                    <UniformGrid Rows="2">
+                        <CheckBox Content="Развернуть"
+                                  Style="{StaticResource CheckBoxStyle}"
+                                  VerticalAlignment="Top"
+                                  Margin="5,5,0,0"
+                                  IsChecked="{Binding ReverseSideWalk}" />
+                        <DockPanel Margin="0,3,0,0">
+                            <TextBlock Text="Шаг разбивки, м"
+                                       Style="{StaticResource TextAboveButton}"
+                                       Margin="5,0,10,0" />
+                            <TextBox Text="{Binding SectionStep, UpdateSourceTrigger=PropertyChanged}"
+                                     Height="20"
+                                     Width="40"
+                                     HorizontalAlignment="Left"
+                                     TextAlignment="Center"
+                                     VerticalContentAlignment="Center" />
+                        </DockPanel>
+                    </UniformGrid>
                 </UniformGrid>
             </StackPanel>
         </GroupBox>

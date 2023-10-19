@@ -77,6 +77,15 @@ namespace SideWalkSlab.ViewModels
         }
         #endregion
 
+        #region Шаг растановки сечений края плиты
+        private double _sectionStep;
+        public double SectionStep
+        {
+            get => _sectionStep;
+            set => Set(ref _sectionStep, value);
+        }
+        #endregion
+
         #region Команды
 
         #region Получить ребро элемента
@@ -101,7 +110,7 @@ namespace SideWalkSlab.ViewModels
 
         private void OnCreateSideWalkCommandExecuted(object parameter)
         {
-            RevitModel.CreateSideWalk(FamilySymbolName, ReverseSideWalk);
+            RevitModel.CreateSideWalk(FamilySymbolName, ReverseSideWalk, SectionStep);
             SaveSettings();
         }
 

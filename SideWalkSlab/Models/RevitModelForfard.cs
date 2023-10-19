@@ -64,7 +64,7 @@ namespace SideWalkSlab
         }
         #endregion
 
-        public void CreateSideWalk(FamilySymbolSelector sideWalkFamilySelector, bool reverseSideWalk)
+        public void CreateSideWalk(FamilySymbolSelector sideWalkFamilySelector, bool reverseSideWalk, double sectionStep)
         {
             FamilySymbol sideWalkFamilySymbol = GetFamilySymbolByName(sideWalkFamilySelector);
             var sideWalkCurves = new List<Curve>();
@@ -96,9 +96,8 @@ namespace SideWalkSlab
             double extension = UnitUtils.ConvertToInternalUnits(1, UnitTypeId.Meters);
             edgeCurve.MakeUnbound();
             edgeCurve.MakeBound(-extension, curveLength + extension);
-            double step = 2;
-            step = UnitUtils.ConvertToInternalUnits(step, UnitTypeId.Meters);
-            int count = (int)(curveLength / step);
+            sectionStep = UnitUtils.ConvertToInternalUnits(sectionStep, UnitTypeId.Meters);
+            int count = (int)(curveLength / sectionStep);
             var normalparameters = RevitGeometryUtils.GenerateNormalizeParameters(count);
             var rowParameters = normalparameters.Select(p => edgeCurve.ComputeRawParameter(p));
 
