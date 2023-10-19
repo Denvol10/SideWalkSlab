@@ -81,9 +81,8 @@ namespace SideWalkSlab.Models
             return null;
         }
 
-
         // Получение линий с помощью пользовательского выбора
-        public static List<Curve> GetCurvesBySelection(UIApplication uiapp, out string sideWalkLineElemIds)
+        public static List<ModelCurve> GetCurvesBySelection(UIApplication uiapp, out string sideWalkLineElemIds)
         {
             Document doc = uiapp.ActiveUIDocument.Document;
             Selection sel = uiapp.ActiveUIDocument.Selection;
@@ -94,9 +93,7 @@ namespace SideWalkSlab.Models
             Options options = new Options();
             var sideWalkModelCurves = sideWalkLineRefererences.Select(r => doc.GetElement(r));
             sideWalkLineElemIds = ElementIdToString(sideWalkModelCurves);
-            var sideWalkCurves = sideWalkModelCurves.OfType<ModelCurve>()
-                                                    .Select(mc => mc.GeometryCurve)
-                                                    .ToList();
+            var sideWalkCurves = sideWalkModelCurves.OfType<ModelCurve>().ToList();
 
             return sideWalkCurves;
         }
@@ -123,14 +120,13 @@ namespace SideWalkSlab.Models
         }
 
         // Получение линий из Settings
-        public static List<Curve> GetCurvesById(Document doc, string elemIdsInSettings)
+        public static List<ModelCurve> GetCurvesById(Document doc, string elemIdsInSettings)
         {
             var elemId = GetIdsByString(elemIdsInSettings);
             var modelCurvesId = elemId.Select(id => new ElementId(id));
-            var modelCurveElems = modelCurvesId.Select(id => doc.GetElement(id)).OfType<ModelCurve>();
-            var curves = modelCurveElems.Select(c => c.GeometryCurve).ToList();
+            var modelCurveElems = modelCurvesId.Select(id => doc.GetElement(id)).OfType<ModelCurve>().ToList();
 
-            return curves;
+            return modelCurveElems;
         }
 
         // Генератор нормализованных пораметров точек на линии
@@ -187,6 +183,22 @@ namespace SideWalkSlab.Models
                          .ToList();
 
             return elemIds;
+        }
+
+        // Создать форму на основе линий профиля
+        public static Form CreateExtrusionForm(Document doc, IEnumerable<ModelCurve> curves, double extrusionHeight)
+        {
+            ReferenceArray referenceArray = new ReferenceArray();
+            foreach (var curve in curves)
+            {
+                referenceArray.Append(curve.GeometryCurve.Reference);
+            }
+
+            XYZ direction = new XYZ(0, 0, extrusionHeight);
+
+            Form form = doc.FamilyCreate.NewExtrusionForm(false, referenceArray, direction);
+
+            return form;
         }
 
         // Метод получения строки с ElementId

@@ -69,7 +69,7 @@ namespace SideWalkSlab
         #endregion
 
         #region Линии подрезки 1
-        public List<Curve> CutLines1;
+        public List<ModelCurve> CutLines1;
 
         private string _cutLineIds1;
         public string CutLinesIds1
@@ -87,7 +87,7 @@ namespace SideWalkSlab
         #endregion
 
         #region Линии подрезки 2
-        public List<Curve> CutLines2;
+        public List<ModelCurve> CutLines2;
 
         private string _cutLinesIds2;
         public string CutLinesIds2
@@ -219,6 +219,14 @@ namespace SideWalkSlab
 
                 var loftForm = Doc.FamilyCreate.NewLoftForm(true, curvesForLoft);
 
+                trans.Commit();
+            }
+
+            using (Transaction trans = new Transaction(Doc, "Create Cut Extrusion Form"))
+            {
+                trans.Start();
+                var extrusionForm1 = RevitGeometryUtils.CreateExtrusionForm(Doc, CutLines1, MaxSlabHeight + 100);
+                var extrusionForm2 = RevitGeometryUtils.CreateExtrusionForm(Doc, CutLines2, MaxSlabHeight + 100);
                 trans.Commit();
             }
         }

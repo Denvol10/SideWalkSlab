@@ -10,7 +10,7 @@
         Background="#f0f0f0"
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize"
-        Height="450"
+        Height="375"
         Width="350">
     <Window.DataContext>
         <vm:MainWindowViewModel />
@@ -146,7 +146,8 @@
             </StackPanel>
         </GroupBox>
         <GroupBox Header="Создать крайний элемент плиты"
-                  Style="{StaticResource BorderGroupStyle}">
+                  Style="{StaticResource BorderGroupStyle}"
+                  Height="70">
             <UniformGrid Columns="2">
                 <Button Style="{StaticResource SelectButton}"
                         Content="Создать"
