@@ -64,7 +64,7 @@ namespace SideWalkSlab
         }
         #endregion
 
-        public void CreateSideWalk(FamilySymbolSelector sideWalkFamilySelector)
+        public void CreateSideWalk(FamilySymbolSelector sideWalkFamilySelector, bool reverseSideWalk)
         {
             FamilySymbol sideWalkFamilySymbol = GetFamilySymbolByName(sideWalkFamilySelector);
             var sideWalkCurves = new List<Curve>();
@@ -96,7 +96,7 @@ namespace SideWalkSlab
             double extension = UnitUtils.ConvertToInternalUnits(1, UnitTypeId.Meters);
             edgeCurve.MakeUnbound();
             edgeCurve.MakeBound(-extension, curveLength + extension);
-            double step = 1.5;
+            double step = 2;
             step = UnitUtils.ConvertToInternalUnits(step, UnitTypeId.Meters);
             int count = (int)(curveLength / step);
             var normalparameters = RevitGeometryUtils.GenerateNormalizeParameters(count);
@@ -125,11 +125,17 @@ namespace SideWalkSlab
                     {
                         ReferencePointArray referencePointArray = new ReferencePointArray();
                         XYZ firstPoint = curve.GetEndPoint(0);
-                        XYZ sideWalkFirstPoint = plane.Origin - plane.XVec * firstPoint.X + plane.YVec * firstPoint.Y;
-                        var firstReferencePoint = Doc.FamilyCreate.NewReferencePoint(sideWalkFirstPoint);
-
                         XYZ secondPoint = curve.GetEndPoint(1);
-                        XYZ sideWalkSecondPoint = plane.Origin - plane.XVec * secondPoint.X + plane.YVec * secondPoint.Y;
+                        XYZ sideWalkFirstPoint = plane.Origin + plane.XVec * firstPoint.X + plane.YVec * firstPoint.Y;
+                        XYZ sideWalkSecondPoint = plane.Origin + plane.XVec * secondPoint.X + plane.YVec * secondPoint.Y;
+
+                        if (reverseSideWalk)
+                        {
+                            sideWalkFirstPoint = plane.Origin - plane.XVec * firstPoint.X + plane.YVec * firstPoint.Y;
+                            sideWalkSecondPoint = plane.Origin - plane.XVec * secondPoint.X + plane.YVec * secondPoint.Y;
+                        }
+
+                        var firstReferencePoint = Doc.FamilyCreate.NewReferencePoint(sideWalkFirstPoint);
                         var secondReferencePoint = Doc.FamilyCreate.NewReferencePoint(sideWalkSecondPoint);
 
                         referencePointArray.Append(firstReferencePoint);

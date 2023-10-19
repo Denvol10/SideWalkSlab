@@ -64,6 +64,15 @@ namespace SideWalkSlab.ViewModels
         }
         #endregion
 
+        #region Развернуть край плиты
+        private bool _reverseSideWalk;
+        public bool ReverseSideWalk
+        {
+            get => _reverseSideWalk;
+            set => Set(ref _reverseSideWalk, value);
+        }
+        #endregion
+
         #region Команды
 
         #region Получить ребро элемента
@@ -88,7 +97,7 @@ namespace SideWalkSlab.ViewModels
 
         private void OnCreateSideWalkCommandExecuted(object parameter)
         {
-            RevitModel.CreateSideWalk(FamilySymbolName);
+            RevitModel.CreateSideWalk(FamilySymbolName, ReverseSideWalk);
             SaveSettings();
         }
 
