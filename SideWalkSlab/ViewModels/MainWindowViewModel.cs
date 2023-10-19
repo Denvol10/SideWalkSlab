@@ -78,7 +78,7 @@ namespace SideWalkSlab.ViewModels
         #endregion
 
         #region Шаг растановки сечений края плиты
-        private double _sectionStep;
+        private double _sectionStep = Properties.Settings.Default.SectionStep;
         public double SectionStep
         {
             get => _sectionStep;
@@ -142,6 +142,7 @@ namespace SideWalkSlab.ViewModels
             Properties.Settings.Default.EdgeRepresentation = EdgeRepresentation;
             Properties.Settings.Default.FamilySymbolIndex = SideWalkFamilySymbols.IndexOf(FamilySymbolName);
             Properties.Settings.Default.ReverseSideWalk = ReverseSideWalk;
+            Properties.Settings.Default.SectionStep = SectionStep;
             Properties.Settings.Default.Save();
         }
 
