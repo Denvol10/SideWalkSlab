@@ -64,6 +64,10 @@ namespace SideWalkSlab.ViewModels
         }
         #endregion
 
+        #region Индекс в списке выбранного типоразмера сечения края плиты
+        private int _familySymbolIndex = Properties.Settings.Default.FamilySymbolIndex;
+        #endregion
+
         #region Развернуть край плиты
         private bool _reverseSideWalk;
         public bool ReverseSideWalk
@@ -127,6 +131,7 @@ namespace SideWalkSlab.ViewModels
         private void SaveSettings()
         {
             Properties.Settings.Default.EdgeRepresentation = EdgeRepresentation;
+            Properties.Settings.Default.FamilySymbolIndex = SideWalkFamilySymbols.IndexOf(FamilySymbolName);
             Properties.Settings.Default.Save();
         }
 
@@ -148,6 +153,13 @@ namespace SideWalkSlab.ViewModels
                     EdgeRepresentation = edgeRepresentation;
                     RevitModel.GetEdgeBySettings(edgeRepresentation);
                 }
+            }
+            #endregion
+
+            #region Инициализация значения типоразмера края плиты
+            if (_familySymbolIndex >= 0 && _familySymbolIndex <= SideWalkFamilySymbols.Count - 1)
+            {
+                FamilySymbolName = SideWalkFamilySymbols.ElementAt(_familySymbolIndex);
             }
             #endregion
 
