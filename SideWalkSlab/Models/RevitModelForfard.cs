@@ -68,6 +68,10 @@ namespace SideWalkSlab
         private double MaxSlabHeight { get; set; }
         #endregion
 
+        #region Форма края плиты
+        private Form SideWalkForm { get; set; }
+        #endregion
+
         #region Линии подрезки 1
         public List<ModelCurve> CutLines1;
 
@@ -217,7 +221,7 @@ namespace SideWalkSlab
                     curvesForLoft.Append(sideWalkSectionCurves);
                 }
 
-                var loftForm = Doc.FamilyCreate.NewLoftForm(true, curvesForLoft);
+                SideWalkForm = Doc.FamilyCreate.NewLoftForm(true, curvesForLoft);
 
                 trans.Commit();
             }
@@ -225,8 +229,21 @@ namespace SideWalkSlab
             using (Transaction trans = new Transaction(Doc, "Create Cut Extrusion Form"))
             {
                 trans.Start();
-                var extrusionForm1 = RevitGeometryUtils.CreateExtrusionForm(Doc, CutLines1, MaxSlabHeight + 100);
-                var extrusionForm2 = RevitGeometryUtils.CreateExtrusionForm(Doc, CutLines2, MaxSlabHeight + 100);
+                var extrusionForm1 = RevitGeometryUtils.CreateExtrusionForm(Doc, CutLines1, 1);
+                var offsetParameterForm1 = extrusionForm1.get_Parameter(BuiltInParameter.LOCKED_TOP_OFFSET);
+                offsetParameterForm1.Set(MaxSlabHeight + 100);
+
+                var extrusionForm2 = RevitGeometryUtils.CreateExtrusionForm(Doc, CutLines2, 1);
+                var offsetParameterForm2 = extrusionForm2.get_Parameter(BuiltInParameter.LOCKED_TOP_OFFSET);
+                offsetParameterForm2.Set(MaxSlabHeight + 100);
+
+                var combineElementArray = new CombinableElementArray();
+                combineElementArray.Append(SideWalkForm);
+                combineElementArray.Append(extrusionForm1);
+                combineElementArray.Append(extrusionForm2);
+
+                GeomCombination geomCombination = Doc.CombineElements(combineElementArray);
+
                 trans.Commit();
             }
         }
